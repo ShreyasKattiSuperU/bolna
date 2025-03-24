@@ -87,7 +87,7 @@ class AzureTranscriber(BaseTranscriber):
             speech_config = speechsdk.SpeechConfig(subscription=self.subscription_key, region=self.service_region)
 
             # Set recognition language
-            speech_config.speech_recognition_language = self.recognition_language
+            # speech_config.speech_recognition_language = self.recognition_language
 
             # Configuring the audio format
             audio_format = speechsdk.audio.AudioStreamFormat(
@@ -104,8 +104,12 @@ class AzureTranscriber(BaseTranscriber):
             # Create an audio config using the push stream
             audio_config = speechsdk.audio.AudioConfig(stream=self.push_stream)
 
+            auto_detect_source_language_config = speechsdk.languageconfig.AutoDetectSourceLanguageConfig(
+                languages=["en-US", "hi-IN"]
+            )
+
             # Instantiate a SpeechRecognizer with the above configuration
-            self.recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
+            self.recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config, auto_detect_source_language_config=auto_detect_source_language_config)            
 
             # Connect event handlers to the recognizer
             self.recognizer.recognizing.connect(self._sync_recognizing_handler)
